@@ -1,0 +1,37 @@
+{
+  "_comment": "Claude Code settings for a Forge-adopted repository. Merge into or replace .claude/settings.json. Delete this _comment key before use.",
+  "_usage": "Copy to <repo-root>/.claude/settings.json. The forge-adopt scripts do this automatically.",
+
+  "env": {},
+
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[FORGE] Session ended. Did you run EVAL.sh x3 before any commit/revert decision?' >&2"
+          }
+        ]
+      }
+    ]
+  },
+
+  "_notes": {
+    "EVAL_reminder": "The Stop hook above is a lightweight reminder. For a full pre-commit gate, add a PreToolUse hook on Bash matching 'git commit' that checks EVAL.sh has been run.",
+    "PreToolUse_example": {
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "echo '[FORGE] Running git operation — ensure you have a 3-run EVAL.sh median before committing.' >&2"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,118 @@
+# FORGE_SYSTEM — architecture (this repository only)
+
+This file is used by the **Auditor Protocol** after every 5 commits and by the
+**agent** when evaluating Architecture-type hypotheses.
+
+Populate all sections at adoption time. Update when the architecture changes.
+Incomplete sections will produce low-quality Auditor reviews.
+
+---
+
+## Module map
+
+Describe the top-level structure. List entry points, core domains, and data flow.
+
+```
+Entry points:
+  - [e.g. src/main.py — HTTP server, CLI entrypoint]
+  - [e.g. src/worker.py — background job consumer]
+
+Core domains:
+  - [e.g. auth/ — authentication and session management]
+  - [e.g. pipeline/ — data processing pipeline]
+  - [e.g. store/ — data access layer]
+
+External integrations:
+  - [e.g. PostgreSQL — primary data store (via asyncpg)]
+  - [e.g. Redis — session cache (via aioredis)]
+  - [e.g. S3 — file storage (boto3)]
+
+Data flow (one sentence per path):
+  - [e.g. HTTP request → auth middleware → route handler → store → response]
+```
+
+---
+
+## Module contracts (coupling rules)
+
+Define what each module may and may not depend on. The Auditor checks whether
+commits introduce hidden coupling that violates these contracts.
+
+```
+auth/         → may use: store/, config
+              → must NOT use: pipeline/, external APIs directly
+
+pipeline/     → may use: store/, external integrations
+              → must NOT use: auth/, HTTP handlers
+
+store/        → may use: external integrations (DB, cache)
+              → must NOT use: auth/, pipeline/, HTTP layer
+```
+
+> Add a row per module. "Must NOT use" is the important half — it defines what
+> would constitute architectural regression.
+
+---
+
+## Scorecard rationale
+
+Explain why the EVAL_SPEC.md weights were chosen for this project.
+The Auditor uses this to judge whether the scorecard still reflects true quality
+as the codebase evolves.
+
+```
+PERF_SCORE (0.20):
+  Measures [benchmark target, e.g. p99 latency of /api/process endpoint].
+  Threshold: [e.g. 10.0 at ≤50ms, 5.0 at 250ms, 2.0 at 1s].
+  Calibrated on: [date + git SHA of calibration commit].
+
+QUAL_SCORE (0.25):
+  Measures [e.g. ruff static analysis — zero violations is the bar].
+  Low weight because [e.g. ruff is fast and non-negotiable; violations always fixed same-day].
+
+TEST_SCORE (0.35):
+  Highest weight because [e.g. this service is correctness-critical; broken tests = production incident].
+  Test suite location: [e.g. tests/]
+
+DEBT_SCORE (0.20):
+  Measures [e.g. radon average cyclomatic complexity].
+  Debt allowed to grow: No — DEBT_SCORE must never drop below baseline across any commit.
+```
+
+---
+
+## Invariants
+
+List architectural properties that must hold across every commit.
+These are checked by the Auditor and inform Architecture-type hypotheses.
+
+- [ ] [e.g. No direct SQL queries outside store/ — all DB access via repository functions]
+- [ ] [e.g. Auth token is always validated before route handlers access user data]
+- [ ] [e.g. All external API calls have a timeout ≤ 5 seconds]
+- [ ] [e.g. No circular imports between domains]
+
+---
+
+## Known risks
+
+Pre-existing architectural debt or risks the team is aware of.
+Listing them here is not a commitment to fix them — it is a warning to the Auditor
+not to flag them as new issues introduced by recent commits.
+
+- [e.g. HIGH — pipeline/transformer.py has CC > 20; tracked in PROJECT_LOG.md Cycle 0]
+- [e.g. MED — auth module has no retry logic for DB connection drops]
+
+---
+
+## Rollback notes (Architecture-type hypotheses)
+
+Before starting an Architecture hypothesis, document the rollback plan here.
+Required by `CLAUDE.md` Rule (Architecture type). The Auditor checks this section
+exists before approving an Architecture cycle.
+
+```
+Hypothesis: [one sentence]
+Files in scope: [list]
+Rollback plan: [exact steps to revert — git commands or manual steps]
+Pre-hypothesis snapshot: git SHA [fill before making changes]
+```

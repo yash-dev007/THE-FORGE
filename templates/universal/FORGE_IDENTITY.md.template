@@ -1,0 +1,14 @@
+# Forge identity — copy to repository root as `FORGE_IDENTITY.md`
+
+`ForgeProjectSlug` must be **unique** in your Obsidian vault under `Forge/Projects/`. See THE FORGE kit `docs/KIT_LAYOUT.md`.
+
+```yaml
+ForgeProjectSlug: "org-repo-name"
+ProjectDisplayName: "Human readable name"
+TechStack: "Stack · libraries · datastore"
+PrimaryLanguage: "e.g. Python"
+DefaultHypothesisType: "Performance"
+ForgeSession: 1
+RepositoryRoot: ""
+ObsidianVaultRoot: ""
+```

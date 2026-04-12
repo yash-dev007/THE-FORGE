@@ -1,0 +1,26 @@
+# ── Obsidian vault UI state (changes constantly; not methodology content) ──────
+.obsidian/workspace
+.obsidian/workspace.json
+.obsidian/cache
+.obsidian/plugins/*/data.json
+.obsidian/hotkeys.json
+
+# Obsidian config files ARE committed (app.json, appearance.json, core-plugins.json,
+# graph.json) — they define vault settings to open the vault correctly.
+
+# ── Claude Code local settings (machine-specific) ─────────────────────────────
+.claude/settings.local.json
+
+# ── OS artifacts ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor state ───────────────────────────────────────────────────────────────
+*.swp
+*.swo
+.vscode/settings.json
+
+# ── Temp files from EVAL.sh runs ──────────────────────────────────────────────
+forge_bench_*.json
+forge_debt_*.json

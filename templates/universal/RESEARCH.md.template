@@ -1,0 +1,41 @@
+# RESEARCH — active hypothesis
+
+If any **required** section below is missing or placeholder-only, the agent must output `[FORGE] BLOCKED` and stop.
+
+## Hypothesis
+
+One falsifiable sentence naming a **specific mechanism** (not "make it faster").
+
+## Hypothesis Type
+
+Exactly one of: **Performance** | **Correctness** | **Debt** | **Architecture**
+
+## Confidence
+
+Exactly one of: **High** | **Medium** | **Low**
+
+Reasoning (optional Obsidian pattern cites under this repo’s `Forge/Projects/<ForgeProjectSlug>/` only).
+
+## Target File
+
+Exact path relative to repository root, e.g. `src/module/file.py`
+
+## Target Scope
+
+Line range or function name, e.g. `Lines 10–80` or `function: foo()`
+
+## Baseline Score
+
+Fill **after** three `EVAL.sh` runs (median composite `SCORE`). Timestamp: 
+
+## Goal Score
+
+Must be greater than Baseline; achievable in one cycle.
+
+## Exploration Budget
+
+Max cycles before pivot (default 3).
+
+## Blocked Approaches
+
+- List failed approaches for this hypothesis to avoid repetition.

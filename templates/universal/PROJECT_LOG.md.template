@@ -1,0 +1,52 @@
+# PROJECT_LOG — Forge cycles (this repository only)
+
+All **cycle numbers**, **velocity reports**, **commit counts toward Auditor**, and **Pattern Distillation** cadences are **per this git repository**. Do not merge logs across projects.
+
+## Operational counters (per repo)
+
+- **Cycle number:** increment in each `## Cycle N` heading below; used for velocity blocks (every 5 cycles) and Pattern Distillation (every 10 cycles).
+- **Commits since last audit:** maintain in the latest velocity report or a one-line state note at top; trigger **Auditor** after every **5 commits** (see `CLAUDE.md`).
+- **Stagnation:** computed from **this file’s** last three Velocity Reports only.
+
+---
+
+## Velocity Report — Cycles [N] to [N+4]
+
+| Metric | Value |
+|--------|-------|
+| Wins (COMMIT) | X / 5 |
+| Neutral (HOLD) | X / 5 |
+| Losses (REVERT) | X / 5 |
+| Win Rate | XX% |
+| Avg Score Delta per Win | +X.X |
+| Avg Score Delta overall | +X.X |
+| Hypothesis Types this sprint | Performance: N, Correctness: N, Debt: N, Arch: N |
+| Anomalies detected | N |
+| Exploration Budget remaining | N cycles |
+| Commits since last Auditor | N / 5 |
+| Trend | ↑ Accelerating / → Stable / ↓ Stagnating |
+
+---
+
+## Cycle 0 — [ISO Date] — [Hypothesis Type]
+
+| Field | Value |
+|-------|-------|
+| Hypothesis | |
+| Target File | |
+| Mechanism | |
+| Predicted Δ | |
+| Actual Δ | |
+| Prediction accuracy | |
+| Scores | PERF: X→Y · QUAL: X→Y · TEST: X→Y · DEBT: X→Y · COMPOSITE: X→Y |
+| Decision | COMMIT / REVERT / HOLD |
+| Anomalies | None |
+
+**Causal Explanation:**
+
+
+**Negative Knowledge:**
+
+
+**Pattern Signal:**
+

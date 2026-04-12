@@ -1,0 +1,28 @@
+---
+description: THE FORGE v3 — per-repo Quintet, 3-run EVAL median, status lines, isolation
+globs: "**/*"
+alwaysApply: false
+---
+
+# THE FORGE v3 (multi-project)
+
+When working in a repository that uses THE FORGE (presence of `RESEARCH.md` + `EVAL_SPEC.md` + `EVAL.sh` at the **repository root**), treat the project as a research loop.
+
+## Startup (each session)
+
+1. Read the **Quintet** in order: `RESEARCH.md` → `EVAL_SPEC.md` → `PROJECT_LOG.md` → `FORGE_SYSTEM.md` → `CLAUDE.md`.
+2. Validate `RESEARCH.md` contains all eight required sections from `CLAUDE.md`. If not → `[FORGE] BLOCKED`.
+3. Read `FORGE_IDENTITY.md` for `ForgeProjectSlug` and Obsidian paths. Only query Obsidian under `Forge/Projects/<ForgeProjectSlug>/` plus global `Forge/Patterns/`. Never load another project’s Obsidian folder.
+4. Run `./EVAL.sh` **three times** on unchanged code; take the **median** composite `SCORE` as baseline. If score spread > 0.3, halt and report flakiness (human fixes harness).
+5. Output the **Forge Status Report** format from `CLAUDE.md`, then propose **exactly three** hypotheses (including a forced Architecture option on every 10th cycle per `CLAUDE.md`). **Wait** for human selection.
+
+## During work
+
+- Start every assistant message with the **`[FORGE]` status line** prescribed in `CLAUDE.md`.
+- Do **not** modify `EVAL.sh` or `EVAL_SPEC.md` during hypothesis cycles (maintainer-only for adoption or harness repair).
+- Use the **decision matrix** and **anti-gaming** rules from `CLAUDE.md`; on anomaly → `[FORGE] ANOMALY DETECTED` and revert guidance.
+- **Auditor** every five **commits**; **Pattern Distillation** every ten **cycles** — counts live in **this repo’s** `PROJECT_LOG.md` only.
+
+## If Quintet missing
+
+Do not invent scores. Point the user to THE FORGE kit `docs/ADOPT.md` (path may be a sibling repo or where they installed the kit).
