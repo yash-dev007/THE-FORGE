@@ -6,10 +6,10 @@
 
 *Diagnose · Hypothesize · Execute · Verify · Synthesize*
 
-[![Version](https://img.shields.io/badge/version-v3.1-blueviolet?style=flat-square)](docs/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v3.2-blueviolet?style=flat-square)](docs/CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#license)
 [![Stacks](https://img.shields.io/badge/stacks-Python%20%7C%20Node%20%7C%20Go%20%7C%20Minimal-green?style=flat-square)](#stacks)
-[![Agent Support](https://img.shields.io/badge/agents-Claude%20Code%20%7C%20Cursor-orange?style=flat-square)](#agent-integration)
+[![Agent Support](https://img.shields.io/badge/agents-Gemini%20CLI%20%7C%20Claude%20Code%20%7C%20Cursor-orange?style=flat-square)](#agent-integration)
 
 </div>
 
@@ -21,7 +21,7 @@ Imagine you hired a brilliant senior engineer who, instead of just writing code 
 
 That's THE FORGE.
 
-**THE FORGE is a portable workflow kit** that turns your AI coding assistant (Claude Code or Cursor) into that disciplined scientist. You drop it into any codebase — a Python API, a Node.js service, a Go microservice — and your AI agent stops guessing and starts doing *repeatable research*.
+**THE FORGE is a portable workflow kit** that turns your AI coding assistant (Gemini CLI, Claude Code, or Cursor) into that disciplined scientist. You drop it into any codebase — a Python API, a Node.js service, a Go microservice — and your AI agent stops guessing and starts doing *repeatable research*.
 
 It is not a product. It is not a framework your code depends on. It's a **methodology kit**: a set of files and scripts you copy into your project that tell the AI exactly how to think, how to measure, and when to stop.
 
@@ -165,7 +165,7 @@ THE FORGE is structured around five concepts:
 
 | File | What it does |
 |------|-------------|
-| `CLAUDE.md` | The operating manual — rules, loop structure, anti-gaming policies |
+| `CLAUDE.md` | The operating manual — rules, loop structure, anti-gaming policies (Platform discovery file) |
 | `RESEARCH.md` | The active hypothesis — what are you testing right now, and why |
 | `EVAL_SPEC.md` | The scorecard — what dimensions matter and how they're weighted |
 | `EVAL.sh` | The judge — runs your test suite, linter, and complexity checks |
@@ -314,13 +314,13 @@ See [docs/OBSIDIAN_SETUP.md](docs/OBSIDIAN_SETUP.md) for vault setup options.
 
 ```
 THE FORGE/
-├── CLAUDE.md                        ← Kit workspace context (for Claude Code)
-├── cursor.md                        ← Kit workspace notes (for Cursor)
+├── CLAUDE.md                        ← Universal kit rules
+├── FORGE_MAINTAINER.md              ← Kit workspace notes (for AI agents)
 ├── README.md                        ← This file
 │
 ├── templates/
 │   ├── universal/                   ← Files copied to every adopted project
-│   │   ├── CLAUDE.md                ← v3 operating rules (canonical text)
+│   │   ├── FORGE.md                 ← v3 operating rules (canonical text)
 │   │   ├── FORGE_IDENTITY.md.template
 │   │   ├── RESEARCH.md.template
 │   │   ├── FORGE_SYSTEM.md.template
@@ -363,7 +363,7 @@ As THE FORGE kit evolves, refresh your adopted projects without touching your
 hypothesis state:
 
 ```bash
-# Refresh CLAUDE.md + agent integration only (safe — preserves all project state)
+# Refresh FORGE.md + agent integration only (safe — preserves all project state)
 ./scripts/forge-update.sh --target /path/to/your-project
 
 # Also refresh EVAL harness (resets baseline — use deliberately)

@@ -52,7 +52,7 @@ CUR="$T/cursor"
 [[ -d "$S" ]] || { echo "Error: stack not found: $S" >&2; exit 2; }
 
 # ── Universal Quintet files ─────────────────────────────────────────────────
-cp "$U/CLAUDE.md"                        "$TARGET/CLAUDE.md"
+cp "$U/FORGE.md"                         "$TARGET/CLAUDE.md"
 cp "$U/FORGE_IDENTITY.md.template"       "$TARGET/FORGE_IDENTITY.md"
 cp "$U/RESEARCH.md.template"             "$TARGET/RESEARCH.md"
 cp "$U/FORGE_SYSTEM.md.template"         "$TARGET/FORGE_SYSTEM.md"
@@ -76,6 +76,10 @@ if [[ ! -f "$TARGET/.claude/settings.json" ]]; then
 else
   echo "  [skip] .claude/settings.json already exists — merge manually if needed"
 fi
+
+# ── Gemini CLI integration ──────────────────────────────────────────────────
+GEM="$T/gemini-cli"
+cp "$GEM/GEMINI.md"                      "$TARGET/GEMINI.md"
 
 # ── Summary ─────────────────────────────────────────────────────────────────
 echo ""

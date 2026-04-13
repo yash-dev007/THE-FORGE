@@ -55,7 +55,7 @@ CUR="$T/cursor"
 
 # --- Update CLAUDE.md (operating rules) ---
 echo "  [update] CLAUDE.md"
-cp "$U/CLAUDE.md" "$TARGET/CLAUDE.md"
+cp "$U/FORGE.md" "$TARGET/CLAUDE.md"
 
 # --- Update Claude Code integration ---
 mkdir -p "$TARGET/.claude"
@@ -74,6 +74,11 @@ fi
 mkdir -p "$TARGET/.cursor/rules"
 echo "  [update] .cursor/rules/forge-v3.mdc"
 cp "$CUR/forge-v3.mdc" "$TARGET/.cursor/rules/forge-v3.mdc"
+
+# --- Update Gemini CLI integration ---
+GEM="$T/gemini-cli"
+echo "  [update] GEMINI.md"
+cp "$GEM/GEMINI.md" "$TARGET/GEMINI.md"
 
 # --- Optionally update EVAL harness ---
 if [[ "$UPDATE_EVAL" == "true" ]]; then

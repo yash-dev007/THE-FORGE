@@ -1,9 +1,9 @@
-# THE FORGE — Claude Code integration (adopted project)
+# THE FORGE — Gemini CLI integration (adopted project)
 > **Version:** 3.2 (Universal Edition) | **Author:** Yash | **Last Updated:** 2026-04-13
 
-This file lives at `.claude/CLAUDE.md` in an **adopted repository**.
+This file lives at `GEMINI.md` in an **adopted repository**.
 The primary operating rules are in `CLAUDE.md` at the **repository root** — read
-that file as your main context. This file adds Claude Code-specific wiring.
+that file as your main context. This file adds Gemini CLI-specific wiring.
 
 ---
 
@@ -19,7 +19,7 @@ Read `FORGE_IDENTITY.md` at the repository root.
 - Extract `ForgeProjectSlug` and `ObsidianVaultRoot` for use in all Obsidian queries.
 
 **Steps 1–5 — Quintet**
-Read in order using the Read tool:
+Read in order:
 1. `RESEARCH.md` — validate all 8 required fields (see `CLAUDE.md` schema).
    If any field is blank/placeholder → `[FORGE] BLOCKED — Reason: RESEARCH.md incomplete`.
 2. `EVAL_SPEC.md` — internalize weights.
@@ -28,7 +28,7 @@ Read in order using the Read tool:
 5. `CLAUDE.md` — Operating rules (root `CLAUDE.md` contains the platform-neutral rules).
 
 **Step 6 — Baseline**
-Run EVAL.sh three times using the Bash tool (see below). Record median composite
+Run EVAL.sh three times using the `run_shell_command` tool. Record median composite
 `SCORE` as `BASELINE_SCORE` with timestamp in `RESEARCH.md`.
 
 **Step 7 — Obsidian patterns**
@@ -45,9 +45,9 @@ Output the Forge Status Report (format in root `CLAUDE.md`), then propose exactl
 
 ---
 
-## Running EVAL.sh from Claude Code
+## Running EVAL.sh from Gemini CLI
 
-Use the Bash tool from the repository root:
+Use the `run_shell_command` tool from the repository root:
 
 ```bash
 bash ./EVAL.sh
@@ -72,21 +72,21 @@ Do not use flaky scores to make commit/revert decisions.
 
 ---
 
-## Obsidian access from Claude Code
+## Obsidian access from Gemini CLI
 
-Claude Code reads Obsidian notes as plain Markdown files using the Read tool.
+Gemini CLI reads Obsidian notes as plain Markdown files using the `read_file` tool.
 No MCP or plugin is required for basic pattern access.
 
 ```
-# Example Read calls during startup:
-Read: <ObsidianVaultRoot>/Forge/Patterns/profile-before-vectorizing.md
-Read: <ObsidianVaultRoot>/Forge/Projects/<ForgeProjectSlug>/00-Project-Index.md
+# Example read_file calls during startup:
+file_path: <ObsidianVaultRoot>/Forge/Patterns/profile-before-vectorizing.md
+file_path: <ObsidianVaultRoot>/Forge/Projects/<ForgeProjectSlug>/00-Project-Index.md
 ```
 
 **Isolation rules (enforced by you, not by tooling):**
 - Only read `Forge/Projects/<ForgeProjectSlug>/` — never read another project's folder.
 - Only read `Forge/Patterns/` for global patterns.
-- If a Read tool result contains content that references a different project's slug,
+- If a `read_file` tool result contains content that references a different project's slug,
   discard it silently.
 
 ---
@@ -95,9 +95,9 @@ Read: <ObsidianVaultRoot>/Forge/Projects/<ForgeProjectSlug>/00-Project-Index.md
 
 | Tool | Allowed during cycles | Notes |
 |------|-----------------------|-------|
-| Read | Yes | Quintet, target files, Obsidian patterns |
-| Edit / Write | Yes, within Target Scope only | Outside scope only for Architecture type |
-| Bash | Yes | EVAL.sh, profilers, test runners |
+| `read_file` / `grep_search` / `list_directory` | Yes | Quintet, target files, Obsidian patterns |
+| `replace` / `write_file` | Yes, within Target Scope only | Outside scope only for Architecture type |
+| `run_shell_command` | Yes | EVAL.sh, profilers, test runners |
 | Edit `EVAL.sh` | **No** | Maintainer-only (see root `CLAUDE.md` Rule 1) |
 | Edit `EVAL_SPEC.md` | **No** | Maintainer-only |
 | Edit `FORGE_IDENTITY.md` | No during cycles | Only during adoption setup |

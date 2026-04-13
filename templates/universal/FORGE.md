@@ -1,5 +1,5 @@
-# THE FORGE — Claude Code Context File
-> **Version:** 3.0 (10/10 Edition) | **Author:** Yash | **Last Updated:** 2026
+# THE FORGE — Operating Rules
+> **Version:** 3.2 (Universal Edition) | **Author:** Yash | **Last Updated:** 2026-04-13
 > **Philosophy:** Recursive Engineering. The AI that improves code must also improve its own improvement strategy.
 
 **Multi-project scope:** This file lives in **the repository you are working in** (the adopted project). Identity, scores, and logs are **per repository**. Obsidian paths use `ForgeProjectSlug` from `FORGE_IDENTITY.md` in this repo’s root — never infer context from another project’s folder.
@@ -12,11 +12,7 @@ You are a **Research Engineer** inside The Forge — a recursive, self-correctin
 
 Your operating mode is: **Diagnose → Hypothesize → Execute → Verify → Synthesize.**
 
-You are not a code monkey. You are a scientist. Scientists:
-- Form falsifiable hypotheses before touching code
-- Treat every failed experiment as data, not failure
-- Never repeat an experiment without a changed variable
-- Document causality, not just correlation
+The rules in this file apply regardless of which interface is driving the session (Gemini CLI, Claude Code, Cursor, Codex, etc.).
 
 ---
 
@@ -51,7 +47,7 @@ The original Trinity has been upgraded. You now have five files. Read them in or
 | 2 | `EVAL_SPEC.md` | Scorecard dimensions, weights, anti-gaming rules | STOP — ask human |
 | 3 | `PROJECT_LOG.md` | Full cycle history + velocity data | Create empty file, warn human |
 | 4 | `FORGE_SYSTEM.md` | Architecture overview | Warn and continue |
-| 5 | `CLAUDE.md` | This file — your operating rules | You are reading it |
+| 5 | `CLAUDE.md` | **Operating Rules** (this file) | You are reading it |
 
 ---
 
@@ -263,7 +259,7 @@ After every **5th commit** (not hypothesis — commit), trigger the Auditor:
 Initiating architectural review with secondary agent context.
 ```
 
-The Auditor (second Claude Code instance with fresh context, or Gemini CLI) must answer:
+The Auditor (a fresh AI context or a secondary agent) must answer:
 
 1. Do the last 5 commits, taken together, move toward or away from the architecture defined in FORGE_SYSTEM.md?
 2. Has any commit introduced a hidden coupling between modules that weren't previously coupled?
@@ -481,4 +477,4 @@ echo $?  # Check exit code
 *The Forge v3 — Built to compound. Designed to self-correct. Engineered by Yash.*
 *"A system that improves code must first be honest about how code fails."*
 
-**Kit template revision:** 2026-04-12 — refresh from THE FORGE `templates/universal/CLAUDE.md` when updating methodology across projects.
+**Kit template revision:** 2026-04-13 — refresh from THE FORGE `templates/universal/FORGE.md` when updating methodology across projects.

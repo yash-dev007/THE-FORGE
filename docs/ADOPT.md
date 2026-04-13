@@ -52,7 +52,7 @@ Available stacks: `minimal` · `python` · `node` · `go`
 
 | Source | Destination |
 |--------|-------------|
-| `templates/universal/CLAUDE.md` | `<repo>/CLAUDE.md` |
+| `templates/universal/FORGE.md` | `<repo>/CLAUDE.md` (Operating Rules) |
 | `templates/universal/FORGE_IDENTITY.md.template` | `<repo>/FORGE_IDENTITY.md` |
 | `templates/universal/RESEARCH.md.template` | `<repo>/RESEARCH.md` |
 | `templates/universal/FORGE_SYSTEM.md.template` | `<repo>/FORGE_SYSTEM.md` |
@@ -129,23 +129,21 @@ See [CURSOR_RULES.md](CURSOR_RULES.md) for full details.
 
 ---
 
-## Step 7b — Claude Code integration
+## Step 7b — Gemini CLI & Claude Code integration
 
-After adoption, the repo contains `.claude/CLAUDE.md` and `.claude/settings.json`
+After adoption, the repo contains `.claude/CLAUDE.md`, `.claude/settings.json`, and `GEMINI.md`
 (copied by the adopt script).
 
-`.claude/CLAUDE.md` tells Claude Code:
+`GEMINI.md` tells Gemini CLI:
 - The startup gate (read FORGE_IDENTITY.md, then the Quintet in order)
-- How to run EVAL.sh via the Bash tool
-- How to read Obsidian pattern files
+- How to run EVAL.sh via the `run_shell_command` tool
+- How to read Obsidian pattern files using the `read_file` tool
 - Which tools are allowed during hypothesis cycles
 
-`.claude/settings.json` provides example hooks (Stop reminder, optional PreToolUse
-git-commit gate). Edit it to match your workflow; delete the `_comment` keys.
+`.claude/CLAUDE.md` does the same for Claude Code.
+`.claude/settings.json` provides example hooks for Claude Code.
 
-**Session start in Claude Code:** Open the adopted repo directory. Claude Code reads
-`.claude/CLAUDE.md` first, then `CLAUDE.md` at the repo root. The startup gate
-automatically runs the Forge initialization sequence.
+**Session start in Gemini CLI:** Open the adopted repo directory in Gemini CLI. It automatically reads `GEMINI.md` at the repo root. The startup gate automatically runs the Forge initialization sequence.
 
 ---
 
@@ -204,7 +202,7 @@ Promoting a pattern to global `Forge/Patterns/` requires the v3 rule: seen on
 
 ## Keeping `CLAUDE.md` in sync
 
-`templates/universal/CLAUDE.md` may evolve as the methodology is refined.
+`templates/universal/FORGE.md` may evolve as the methodology is refined.
 When the kit ships a new version:
 1. Run `forge-update.*` (without `--update-eval`) in each adopted repo.
 2. The footer `Kit template revision:` line in `CLAUDE.md` shows the version you have.

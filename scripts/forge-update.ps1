@@ -61,7 +61,7 @@ function Copy-FileSafe($src, $dst) {
 
 # --- Update CLAUDE.md ---
 Write-Host "  [update] CLAUDE.md"
-Copy-FileSafe (Join-Path $Universal "CLAUDE.md") (Join-Path $TargetRepo "CLAUDE.md")
+Copy-FileSafe (Join-Path $Universal "FORGE.md") (Join-Path $TargetRepo "CLAUDE.md")
 
 # --- Update Claude Code integration ---
 $claudeDir = Join-Path $TargetRepo ".claude"
@@ -83,6 +83,11 @@ $cursorRulesDst = Join-Path $TargetRepo ".cursor\rules"
 if (-not (Test-Path $cursorRulesDst)) { New-Item -ItemType Directory -Force -Path $cursorRulesDst | Out-Null }
 Write-Host "  [update] .cursor\rules\forge-v3.mdc"
 Copy-FileSafe (Join-Path $CursorDir "forge-v3.mdc") (Join-Path $cursorRulesDst "forge-v3.mdc")
+
+# --- Update Gemini CLI integration ---
+$GeminiDir = Join-Path $Templates "gemini-cli"
+Write-Host "  [update] GEMINI.md"
+Copy-FileSafe (Join-Path $GeminiDir "GEMINI.md") (Join-Path $TargetRepo "GEMINI.md")
 
 # --- Optionally update EVAL harness ---
 if ($UpdateEval) {

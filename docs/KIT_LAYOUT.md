@@ -10,10 +10,10 @@ from here into **that repository's root** (see [ADOPT.md](ADOPT.md)).
 
 | Path | Purpose |
 |------|---------|
-| `CLAUDE.md` | Claude Code workspace context for the kit repo itself (not an adopted-project context) |
-| `cursor.md` | Cursor workspace notes for the kit repo |
+| `CLAUDE.md` | Universal Forge operating rules (copied from `templates/universal/FORGE.md`) |
+| `FORGE_MAINTAINER.md` | Universal agent and maintainer notes for the kit repo |
 | `README.md` | Human-facing overview and quick links |
-| `temp_docs/CLAUDE_v3.md` | Archived source spec (v3.0); canonical living text is `templates/universal/CLAUDE.md` |
+| `temp_docs/CLAUDE_v3.md` | Archived source spec (v3.0); canonical living text is `templates/universal/FORGE.md` |
 | `docs/ADOPT.md` | Adoption playbook for any project |
 | `docs/KIT_LAYOUT.md` | This file |
 | `docs/CURSOR_RULES.md` | User-level vs per-repo Cursor integration |
@@ -41,7 +41,7 @@ from here into **that repository's root** (see [ADOPT.md](ADOPT.md)).
 
 | File | Copied to adopted repo as |
 |------|--------------------------|
-| `CLAUDE.md` | `CLAUDE.md` (operating rules, v3 multi-project) |
+| `FORGE.md` | `CLAUDE.md` (Operating Rules) |
 | `FORGE_IDENTITY.md.template` | `FORGE_IDENTITY.md` (fill YAML after copy) |
 | `RESEARCH.md.template` | `RESEARCH.md` (fill hypothesis fields) |
 | `FORGE_SYSTEM.md.template` | `FORGE_SYSTEM.md` (fill all six sections) |
@@ -100,7 +100,8 @@ Never reuse another project's slug. Never query another project's folder in a se
 Each adopted repo contains at its **root**:
 
 ```
-CLAUDE.md            ← operating rules (from templates/universal/CLAUDE.md)
+CLAUDE.md            ← operating rules (from templates/universal/FORGE.md)
+GEMINI.md            ← Gemini CLI startup gate + EVAL runner + Obsidian access
 FORGE_IDENTITY.md    ← project name, stack, Obsidian slug, vault hint
 RESEARCH.md          ← active hypothesis (strict schema — 8 required fields)
 EVAL_SPEC.md         ← scorecard (from chosen templates/stacks/<stack>/)

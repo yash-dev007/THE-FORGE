@@ -9,6 +9,24 @@ footer. Adopted repos should re-run `scripts/forge-update.*` to pull the latest
 
 ---
 
+## v3.2 — 2026-04-13
+
+### Added
+- `templates/gemini-cli/GEMINI.md` — Gemini CLI bridge file for adopted repos
+  (startup gate, `run_shell_command`-based EVAL.sh runner, `read_file`-based
+  Obsidian pattern access)
+- `scripts/forge-adopt.sh` + `forge-adopt.ps1` — now copies `templates/gemini-cli/GEMINI.md`
+  into the target repository root automatically
+- `scripts/forge-update.sh` + `forge-update.ps1` — now refreshes `GEMINI.md`
+  in already-adopted repos
+- `docs/ADOPT.md` — updated Step 7b to include Gemini CLI integration
+
+### Changed
+- `README.md` — added Gemini CLI to supported agents badge and description
+- `docs/KIT_LAYOUT.md` — documented `GEMINI.md` in root and `templates/gemini-cli/`
+
+---
+
 ## v3.1 — 2026-04-12
 
 ### Added
@@ -45,7 +63,7 @@ footer. Adopted repos should re-run `scripts/forge-update.*` to pull the latest
 - `docs/KIT_LAYOUT.md` — documents `templates/claude-code/`, `scripts/forge-update.*`,
   and new docs
 - `README.md` — updated quick links; added FORGE_VERSION; forge-update in scripts
-- `cursor.md` — updated work summary and changelog entry
+- `FORGE_MAINTAINER.md` — updated work summary and changelog entry
 
 ---
 
@@ -62,4 +80,4 @@ footer. Adopted repos should re-run `scripts/forge-update.*` to pull the latest
 - `templates/cursor/forge-v3.mdc`
 - `Forge/Patterns/README.md` + example pattern
 - `Forge/Projects/_TEMPLATE_SLUG/00-Project-Index.md`
-- `README.md`, `cursor.md`
+- `README.md`, `FORGE_MAINTAINER.md`

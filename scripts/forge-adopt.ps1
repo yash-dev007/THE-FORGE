@@ -52,7 +52,7 @@ $ClaudeCode = Join-Path $Templates "claude-code"
 $CursorDir  = Join-Path $Templates "cursor"
 
 # ── Universal Quintet files ─────────────────────────────────────────────────
-Copy-FileSafe (Join-Path $Universal "CLAUDE.md")                  (Join-Path $TargetRepo "CLAUDE.md")
+Copy-FileSafe (Join-Path $Universal "FORGE.md")                   (Join-Path $TargetRepo "CLAUDE.md")
 Copy-FileSafe (Join-Path $Universal "FORGE_IDENTITY.md.template") (Join-Path $TargetRepo "FORGE_IDENTITY.md")
 Copy-FileSafe (Join-Path $Universal "RESEARCH.md.template")       (Join-Path $TargetRepo "RESEARCH.md")
 Copy-FileSafe (Join-Path $Universal "FORGE_SYSTEM.md.template")   (Join-Path $TargetRepo "FORGE_SYSTEM.md")
@@ -78,6 +78,10 @@ if (-not (Test-Path $SettingsDst)) {
 } else {
   Write-Host "  [skip] .claude\settings.json already exists — merge manually if needed"
 }
+
+# ── Gemini CLI integration ──────────────────────────────────────────────────
+$GeminiDir = Join-Path $Templates "gemini-cli"
+Copy-FileSafe (Join-Path $GeminiDir "GEMINI.md") (Join-Path $TargetRepo "GEMINI.md")
 
 # ── Summary ─────────────────────────────────────────────────────────────────
 Write-Host ""
