@@ -10,7 +10,7 @@ in an AI-powered editor or CLI.
 ## What this repo is
 
 **THE FORGE** is a **multi-project methodology kit** derived from
-[temp_docs/CLAUDE_v3.md](temp_docs/CLAUDE_v3.md). It does not ship one product's
+[docs/spec/CLAUDE_v3.md](docs/spec/CLAUDE_v3.md). It does not ship one product's
 application code. It ships:
 
 - **Templates** so any target repository can adopt a per-repo **Quintet**
@@ -59,7 +59,7 @@ Refer to [README.md](README.md) for the high-level overview and [docs/KIT_LAYOUT
 
 1. **When editing THE FORGE (this repo):** You are maintaining **templates and docs**.
    Prefer small, focused edits; keep `templates/universal/FORGE.md` aligned with
-   v3 semantics in `temp_docs/CLAUDE_v3.md` when the spec changes.
+   v3 semantics in `docs/spec/CLAUDE_v3.md` when the spec changes.
 
 2. **When the user adopts Forge elsewhere:** They copy files from `templates/` (or
    run `scripts/forge-adopt.*`). The **active** `CLAUDE.md`, Quintet, and
@@ -95,16 +95,9 @@ run `bash ./EVAL.sh` three times for baseline (see [docs/ADOPT.md](docs/ADOPT.md
 
 ---
 
-## Related files (do not confuse)
+## Repository Map
 
-| File | Role |
-|------|------|
-| [temp_docs/CLAUDE_v3.md](temp_docs/CLAUDE_v3.md) | Original v3 spec snapshot (reference) |
-| [templates/universal/FORGE.md](templates/universal/FORGE.md) | Canonical **copy** for adopted repos |
-| [templates/claude-code/CLAUDE.md](templates/claude-code/CLAUDE.md) | Claude Code bridge for adopted repos |
-| [templates/gemini-cli/GEMINI.md](templates/gemini-cli/GEMINI.md) | Gemini CLI bridge for adopted repos |
-| [CLAUDE.md](CLAUDE.md) | Kit workspace rules (platform-neutral) |
-| [FORGE_MAINTAINER.md](FORGE_MAINTAINER.md) | **This file** — kit workspace notes for AI agents |
+Refer to **[docs/KIT_LAYOUT.md](docs/KIT_LAYOUT.md)** for a complete directory map and file roles.
 
 ---
 

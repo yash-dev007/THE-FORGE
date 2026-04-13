@@ -31,34 +31,22 @@ your operating context for this session.
 
 You are a **kit maintainer**. Your tasks:
 - Editing or improving files under `templates/`, `scripts/`, `docs/`, or `Forge/`
-- Keeping `templates/universal/FORGE.md` aligned with `temp_docs/CLAUDE_v3.md`
+- Keeping `templates/universal/FORGE.md` aligned with `docs/spec/CLAUDE_v3.md`
 - Improving stack EVAL harnesses for correctness and completeness
 - Updating adoption docs and automation scripts
 
 ---
 
-## File roles (do not confuse these)
+## Repository Map
 
-| File | Role |
-|------|------|
-| `temp_docs/CLAUDE_v3.md` | Original v3 spec snapshot — canonical source of truth |
-| `templates/universal/FORGE.md` | Living copy for adopted repos (keep aligned with v3) |
-| `templates/stacks/*/EVAL.sh` | Starter harnesses — review and improve, do not run here |
-| `templates/claude-code/CLAUDE.md` | Claude Code bridge copied into `.claude/` of adopted repos |
-| `templates/cursor/forge-v3.mdc` | Cursor rule copied into `.cursor/rules/` of adopted repos |
-| `scripts/forge-adopt.*` | Adoption scripts — test logic, do not adopt THIS repo |
-| `scripts/forge-update.*` | Template-refresh scripts for already-adopted repos |
-| `Forge/Patterns/` | Global Obsidian pattern notes (read/write as vault notes) |
-| `Forge/Projects/_TEMPLATE_SLUG/` | Obsidian project folder template — copy on adoption |
-| `FORGE_MAINTAINER.md` | Kit workspace notes (what was built, how agents should use this repo) |
-| `CLAUDE.md` | **This file** — universal kit workspace rules |
+Refer to **[docs/KIT_LAYOUT.md](docs/KIT_LAYOUT.md)** for a complete directory map and file roles.
 
 ---
 
 ## Consistency rule for template edits
 
 When editing `templates/universal/FORGE.md`, verify alignment with
-`temp_docs/CLAUDE_v3.md`:
+`docs/spec/CLAUDE_v3.md`:
 
 - All 8 required RESEARCH.md fields must be preserved
 - The Evolution Loop diagram must match the spec

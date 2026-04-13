@@ -27,26 +27,15 @@ your operating context for this session.
 
 You are a **kit maintainer**. Your tasks:
 - Editing or improving files under `templates/`, `scripts/`, `docs/`, or `Forge/`
-- Keeping `templates/universal/FORGE.md` and other templates aligned with `temp_docs/CLAUDE_v3.md`
+- Keeping `templates/universal/FORGE.md` and other templates aligned with `docs/spec/CLAUDE_v3.md`
 - Improving stack EVAL harnesses for correctness and completeness
 - Updating adoption docs and automation scripts
 
 ---
 
-## File roles (do not confuse these)
+## Repository Map
 
-| File | Role |
-|------|------|
-| `temp_docs/CLAUDE_v3.md` | Original v3 spec snapshot — canonical source of truth |
-| `templates/universal/FORGE.md` | Living copy for adopted repos (keep aligned with v3) |
-| `templates/stacks/*/EVAL.sh` | Starter harnesses — review and improve, do not run here |
-| `scripts/forge-adopt.*` | Adoption scripts — test logic, do not adopt THIS repo |
-| `scripts/forge-update.*` | Template-refresh scripts for already-adopted repos |
-| `Forge/Patterns/` | Global Obsidian pattern notes (read/write as vault notes) |
-| `Forge/Projects/_TEMPLATE_SLUG/` | Obsidian project folder template — copy on adoption |
-| `CLAUDE.md` | universal kit workspace rules |
-| `FORGE_MAINTAINER.md` | Kit workspace notes |
-| `GEMINI.md` | **This file** — Gemini CLI workspace context |
+Refer to **[docs/KIT_LAYOUT.md](docs/KIT_LAYOUT.md)** for a complete directory map and file roles.
 
 ---
 

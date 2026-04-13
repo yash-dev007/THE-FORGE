@@ -13,7 +13,7 @@ from here into **that repository's root** (see [ADOPT.md](ADOPT.md)).
 | `CLAUDE.md` | Universal Forge operating rules (copied from `templates/universal/FORGE.md`) |
 | `FORGE_MAINTAINER.md` | Universal agent and maintainer notes for the kit repo |
 | `README.md` | Human-facing overview and quick links |
-| `temp_docs/CLAUDE_v3.md` | Archived source spec (v3.0); canonical living text is `templates/universal/FORGE.md` |
+| `docs/spec/CLAUDE_v3.md` | Archived source spec (v3.0); canonical living text is `templates/universal/FORGE.md` |
 | `docs/ADOPT.md` | Adoption playbook for any project |
 | `docs/KIT_LAYOUT.md` | This file |
 | `docs/CURSOR_RULES.md` | User-level vs per-repo Cursor integration |
