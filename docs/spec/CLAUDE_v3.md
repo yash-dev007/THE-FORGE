@@ -106,7 +106,7 @@ These patterns indicate metric gaming. If you detect any of them, output `[FORGE
 
 1. **Score jumps > 2.0 in a single cycle** on a change touching < 20 lines — suspicious. Verify manually.
 2. **PERF_SCORE improves while TEST_SCORE drops** — you sped it up by breaking it. REVERT.
-3. **DEBT_SCORE improves while QUAL_SCORE drops** — impossible without manipulation. REVERT.
+3. **DEBT_SCORE improves while QUAL_SCORE drops** — suspicious; they measure different dimensions (complexity vs. linting) and can diverge legitimately. Verify the change manually before deciding. If no plausible causal explanation exists, REVERT.
 4. **Same score on 3 consecutive cycles despite different changes** — EVAL.sh may be broken. HALT and report.
 
 ---
@@ -147,7 +147,8 @@ These patterns indicate metric gaming. If you detect any of them, output `[FORGE
                            │
               ┌────────────┴────────────┐
               │                         │
-       SCORE ↑ or EQUAL          SCORE ↓ or ANOMALY
+        SCORE ↑ (Δ > 0)          SCORE ↓ or ANOMALY
+        (Δ = 0 → HOLD)
               │                         │
        ┌──────▼──────┐           ┌──────▼──────┐
        │   COMMIT    │           │   REVERT    │

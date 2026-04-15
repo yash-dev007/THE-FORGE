@@ -58,8 +58,10 @@ graph TD
 | `CLAUDE.md` | **Universal Operating Rules:** The agent's core instructions and anti-gaming rules. |
 | `RESEARCH.md` | **Active Hypothesis:** The specific experiment currently being run. |
 | `EVAL_SPEC.md` | **The Scorecard:** Weights for Performance, Quality, Tests, and Debt. |
-| `EVAL.sh` | **The Judge:** An executable harness that measures the code. |
+| `FORGE_SYSTEM.md` | **Architecture Map:** Module layout, contracts, and invariants for Auditor reviews. |
 | `PROJECT_LOG.md`| **The Memory:** A permanent record of every success and failure. |
+
+`EVAL.sh` is the sixth artifact — the executable harness the agent runs to produce the scorecard. It lives alongside the Quintet but is not a rules file; it is the judge.
 
 ---
 
@@ -115,7 +117,7 @@ THE FORGE is designed to work with any AI agent that can read Markdown rules and
 
 ## 📈 Design Principles
 
-*   **One change, one variable.** causality cannot be understood if you change five things at once.
+*   **One change, one variable.** Causality cannot be understood if you change five things at once.
 *   **Failure is data.** A REVERT is not a setback; it is negative knowledge that prevents future mistakes.
 *   **Memory compounds.** The real value of THE FORGE is the pattern library you build in Obsidian that informs every future project.
 

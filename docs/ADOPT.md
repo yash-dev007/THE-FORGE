@@ -62,6 +62,7 @@ Available stacks: `minimal` · `python` · `node` · `go`
 | `templates/cursor/forge-v3.mdc` | `<repo>/.cursor/rules/forge-v3.mdc` |
 | `templates/claude-code/CLAUDE.md` | `<repo>/.claude/CLAUDE.md` |
 | `templates/claude-code/settings.json` | `<repo>/.claude/settings.json` |
+| `templates/gemini-cli/GEMINI.md` | `<repo>/GEMINI.md` (Gemini CLI integration) |
 
 ---
 

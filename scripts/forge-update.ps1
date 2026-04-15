@@ -108,9 +108,10 @@ Write-Host ""
 
 if ($UpdateEval) {
   Write-Host "  *** EVAL.sh was refreshed. You MUST:"
-  Write-Host "      1. Run ./EVAL.sh three times on unchanged code (Git Bash)."
-  Write-Host "      2. Record the new median in RESEARCH.md > Baseline Score."
-  Write-Host "      3. Note the harness change in PROJECT_LOG.md."
+  Write-Host "      1. On Git Bash/WSL: chmod +x EVAL.sh  (Copy-Item does not set the execute bit)."
+  Write-Host "      2. Run ./EVAL.sh three times on unchanged code (Git Bash)."
+  Write-Host "      3. Record the new median in RESEARCH.md > Baseline Score."
+  Write-Host "      4. Note the harness change in PROJECT_LOG.md."
   Write-Host "      Hypothesis cycles must not resume until baseline is re-established. ***"
   Write-Host ""
 }

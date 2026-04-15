@@ -17,9 +17,9 @@ export CI=true
 
 # PERF_SCORE: replace this line with a benchmark integration (see docs/CUSTOMIZING_EVAL.md).
 PERF_SCORE=6.0
-QUAL_SCORE=6.0
-TEST_SCORE=5.0
-DEBT_SCORE=6.0
+QUAL_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once eslint runs
+TEST_SCORE=5.0   # 5.0 = not yet measured; rises to 0.0 or 10.0 once npm test runs
+DEBT_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once eslint complexity runs
 
 # ── Runtime check ──────────────────────────────────────────────────────────────
 if ! command -v node >/dev/null 2>&1; then

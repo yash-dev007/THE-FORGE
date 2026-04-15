@@ -14,9 +14,9 @@ set -euo pipefail
 EXIT=0
 # PERF_SCORE: replace this line with a benchmark integration (see docs/CUSTOMIZING_EVAL.md).
 PERF_SCORE=6.0
-QUAL_SCORE=6.0
-TEST_SCORE=5.0
-DEBT_SCORE=6.0
+QUAL_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once ruff runs
+TEST_SCORE=5.0   # 5.0 = not yet measured; rises to 0.0 or 10.0 once pytest runs
+DEBT_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once radon runs
 
 if ! command -v python >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; then
   echo "FORGE_EVAL_ERR: python not found" >&2
