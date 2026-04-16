@@ -8,7 +8,7 @@ edit for adoption, stack upgrades, or scorecard redesign only.
 
 | Dimension | Weight | Source in `EVAL.sh` |
 |-----------|--------|---------------------|
-| PERF_SCORE | 0.20 | Placeholder constant — see `docs/CUSTOMIZING_EVAL.md` to wire `go test -bench` |
+| PERF_SCORE | 0.20 | Placeholder constant — see `docs/EVAL_BENCHMARKS.md` to wire `go test -bench` |
 | QUAL_SCORE | 0.25 | `golangci-lint run` if on PATH; else neutral |
 | TEST_SCORE | 0.35 | `go test ./... -count=1 -short` |
 | DEBT_SCORE | 0.20 | `gocyclo -over 10 .` — functions with CC > 10 reduce from 9.0 toward 3.0 |
@@ -29,7 +29,7 @@ Composite: `SCORE = 0.20*PERF + 0.25*QUAL + 0.35*TEST + 0.20*DEBT` (rounded to 2
 |------|-----------|---------|
 | `golangci-lint` | QUAL | `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` |
 | `gocyclo` | DEBT | `go install github.com/fzipp/gocyclo/cmd/gocyclo@latest` |
-| `go test -bench` | PERF | Built-in — add `Benchmark*` funcs; see `docs/CUSTOMIZING_EVAL.md` |
+| `go test -bench` | PERF | Built-in — add `Benchmark*` funcs; see `docs/EVAL_BENCHMARKS.md` |
 | `hyperfine` | PERF | System package (alternative to go bench) |
 
 ## DEBT_SCORE interpretation
@@ -51,6 +51,6 @@ To raise the threshold (e.g. legacy code with many complex functions), change
 ## PERF_SCORE — go test -bench wiring
 
 Add a `BenchmarkHotPath` function (or rename via `FORGE_BENCH_FUNC` env var) in
-your test files and follow the snippet in `docs/CUSTOMIZING_EVAL.md`. The Go stack
+your test files and follow the snippet in `docs/EVAL_BENCHMARKS.md`. The Go stack
 template parses `ns/op` from bench output and maps it to a 2.0–10.0 range using
 calibrated thresholds you define per project.

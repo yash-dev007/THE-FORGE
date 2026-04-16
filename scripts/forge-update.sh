@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 # Refresh THE FORGE methodology templates in an already-adopted repository.
 #
-# Copies:
-#   templates/universal/CLAUDE.md  → <target>/CLAUDE.md
-#   templates/claude-code/         → <target>/.claude/  (CLAUDE.md + settings.json)
-#   templates/cursor/forge-v3.mdc  → <target>/.cursor/rules/forge-v3.mdc
+# Copies (always):
+#   templates/universal/FORGE.md       → <target>/CLAUDE.md
+#   templates/claude-code/FORGE_BRIDGE.md → <target>/.claude/CLAUDE.md
+#   templates/claude-code/skills/forge-cycle.md → <target>/.claude/skills/forge-cycle.md
+#   templates/cursor/forge.mdc         → <target>/.cursor/rules/forge.mdc
+#   templates/gemini-cli/GEMINI.md     → <target>/GEMINI.md
+#   templates/codex/program.md         → <target>/program.md (if exists)
+#   templates/copilot/copilot-instructions.md → <target>/.github/copilot-instructions.md (if exists)
+#   scripts/forge-cycle.sh             → <target>/forge-cycle.sh
+#   scripts/forge-obsidian-sync.sh     → <target>/forge-obsidian-sync.sh
+#   scripts/forge-chart.py             → <target>/forge-chart.py
 #
 # Does NOT overwrite project state:
 #   FORGE_IDENTITY.md, RESEARCH.md, FORGE_SYSTEM.md, PROJECT_LOG.md
@@ -20,7 +27,7 @@ UPDATE_EVAL=false
 
 usage() {
   cat >&2 <<EOF
-Usage: $0 --target /path/to/repo [--stack minimal|python|node|go] [--update-eval]
+Usage: $0 --target /path/to/repo [--stack minimal|python|node|go|rust] [--update-eval]
 
   --target      Path to the already-adopted repository root (required)
   --stack       Stack name (required when --update-eval is set)
@@ -52,17 +59,20 @@ T="$KIT_ROOT/templates"
 U="$T/universal"
 CC="$T/claude-code"
 CUR="$T/cursor"
+S_DIR="$KIT_ROOT/scripts"
 
 # --- Update CLAUDE.md (operating rules) ---
 echo "  [update] CLAUDE.md"
 cp "$U/FORGE.md" "$TARGET/CLAUDE.md"
 
 # --- Update Claude Code integration ---
-mkdir -p "$TARGET/.claude"
+mkdir -p "$TARGET/.claude/skills"
 echo "  [update] .claude/CLAUDE.md"
-cp "$CC/CLAUDE.md" "$TARGET/.claude/CLAUDE.md"
+cp "$CC/FORGE_BRIDGE.md" "$TARGET/.claude/CLAUDE.md"
+echo "  [update] .claude/skills/forge-cycle.md"
+cp "$CC/skills/forge-cycle.md" "$TARGET/.claude/skills/forge-cycle.md"
 
-# settings.json: copy only if not already customized (check for _comment sentinel)
+# settings.json: copy only if not already present
 if [[ ! -f "$TARGET/.claude/settings.json" ]]; then
   echo "  [create] .claude/settings.json (new)"
   cp "$CC/settings.json" "$TARGET/.claude/settings.json"
@@ -72,13 +82,34 @@ fi
 
 # --- Update Cursor rule ---
 mkdir -p "$TARGET/.cursor/rules"
-echo "  [update] .cursor/rules/forge-v3.mdc"
-cp "$CUR/forge-v3.mdc" "$TARGET/.cursor/rules/forge-v3.mdc"
+echo "  [update] .cursor/rules/forge.mdc"
+cp "$CUR/forge.mdc" "$TARGET/.cursor/rules/forge.mdc"
 
 # --- Update Gemini CLI integration ---
-GEM="$T/gemini-cli"
 echo "  [update] GEMINI.md"
-cp "$GEM/GEMINI.md" "$TARGET/GEMINI.md"
+cp "$T/gemini-cli/GEMINI.md" "$TARGET/GEMINI.md"
+
+# --- Update Codex integration (if present in target) ---
+if [[ -f "$TARGET/program.md" ]]; then
+  echo "  [update] program.md (Codex)"
+  cp "$T/codex/program.md" "$TARGET/program.md"
+fi
+
+# --- Update Copilot integration (if present in target) ---
+if [[ -f "$TARGET/.github/copilot-instructions.md" ]]; then
+  echo "  [update] .github/copilot-instructions.md"
+  cp "$T/copilot/copilot-instructions.md" "$TARGET/.github/copilot-instructions.md"
+fi
+
+# --- Update loop driver scripts ---
+echo "  [update] forge-cycle.sh"
+cp "$S_DIR/forge-cycle.sh" "$TARGET/forge-cycle.sh"
+chmod +x "$TARGET/forge-cycle.sh"
+echo "  [update] forge-obsidian-sync.sh"
+cp "$S_DIR/forge-obsidian-sync.sh" "$TARGET/forge-obsidian-sync.sh"
+chmod +x "$TARGET/forge-obsidian-sync.sh"
+echo "  [update] forge-chart.py"
+cp "$S_DIR/forge-chart.py" "$TARGET/forge-chart.py"
 
 # --- Optionally update EVAL harness ---
 if [[ "$UPDATE_EVAL" == "true" ]]; then

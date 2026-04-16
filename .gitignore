@@ -24,3 +24,9 @@ desktop.ini
 # ── Temp files from EVAL.sh runs ──────────────────────────────────────────────
 forge_bench_*.json
 forge_debt_*.json
+
+# ── Test sandbox (not part of the kit) ────────────────────────────────────────
+Test/
+
+# ── Implementation plans (private, not shipped) ───────────────────────────────
+plans/

@@ -18,18 +18,27 @@ from here into **that repository's root** (see [ADOPT.md](ADOPT.md)).
 | `docs/KIT_LAYOUT.md` | This file |
 | `docs/CURSOR_RULES.md` | User-level vs per-repo Cursor integration |
 | `docs/OPS_PER_REPO.md` | Per-repository counters (Auditor, cycles, stagnation) |
-| `docs/CUSTOMIZING_EVAL.md` | How to wire real PERF_SCORE benchmarks per stack |
+| `docs/EVAL_BENCHMARKS.md` | How to wire real PERF_SCORE benchmarks per stack |
 | `docs/OBSIDIAN_SETUP.md` | Vault setup, co-location options, Claude Code read pattern |
+| `docs/LOOP_DRIVER.md` | forge-cycle.sh documentation: modes, anti-gaming, exit codes |
+| `docs/PLATFORMS.md` | Multi-platform guide: per-platform setup, --platforms flag |
 | `docs/CHANGELOG.md` | Kit revision history (methodology + harness changes) |
+| `docs/spec/CLAUDE_v3.md` | Archived v3 spec |
+| `docs/spec/CLAUDE_v4.md` | Current v4 spec (canonical reference) |
 | `templates/universal/` | Project-agnostic Quintet templates (CLAUDE.md + 4 Quintet templates) |
 | `templates/stacks/<stack>/` | Starter `EVAL_SPEC.md` + `EVAL.sh` per stack |
-| `templates/cursor/forge-v3.mdc` | Cursor rule to copy into adopted repos |
-| `templates/claude-code/CLAUDE.md` | Claude Code bridge file copied to `<repo>/.claude/CLAUDE.md` |
+| `templates/cursor/forge.mdc` | Cursor rule to copy into adopted repos |
+| `templates/claude-code/FORGE_BRIDGE.md` | Claude Code bridge file copied to `<repo>/.claude/CLAUDE.md` |
 | `templates/claude-code/settings.json` | Example Claude Code hooks/settings for adopted repos |
 | `scripts/forge-adopt.ps1` | Windows: copy all templates into a new target repo |
 | `scripts/forge-adopt.sh` | Unix: copy all templates into a new target repo |
 | `scripts/forge-update.ps1` | Windows: refresh methodology files in an already-adopted repo |
 | `scripts/forge-update.sh` | Unix: refresh methodology files in an already-adopted repo |
+| `scripts/forge-cycle.sh` | Unix: loop driver core (EVAL × 3, decision, log write, Obsidian sync) |
+| `scripts/forge-cycle.ps1` | Windows: PowerShell wrapper (delegates to forge-cycle.sh via Git Bash) |
+| `scripts/forge-obsidian-sync.sh` | Unix: Obsidian write helper (Score History + Project Index + pattern detection) |
+| `scripts/forge-obsidian-sync.ps1` | Windows: PowerShell equivalent |
+| `scripts/forge-chart.py` | Score visualization: reads PROJECT_LOG.md, outputs forge-chart.html |
 | `Forge/Patterns/` | Obsidian: **global** patterns (optional vault co-located with kit) |
 | `Forge/Projects/` | Obsidian: one subfolder per adopted **project slug** |
 
@@ -49,34 +58,50 @@ from here into **that repository's root** (see [ADOPT.md](ADOPT.md)).
 
 ### `templates/stacks/`
 
-Each stack directory contains exactly two files:
+Each stack directory contains:
 
 | File | Purpose |
 |------|---------|
 | `EVAL_SPEC.md` | Scorecard dimensions, weights, tool descriptions |
 | `EVAL.sh` | Executable harness producing the 5 score lines |
+| `benchmark.*` | Starter benchmark fixture (python/node only) |
+| `benches/` | Criterion bench starter (rust only) |
 
 Available stacks:
 
 | Stack | TEST | QUAL | DEBT | PERF |
 |-------|------|------|------|------|
 | `minimal` | noop 5.0 | noop 5.0 | noop 5.0 | noop 5.0 |
-| `python` | pytest | ruff | radon CC | placeholder |
-| `node` | npm test | eslint | eslint complexity | placeholder |
-| `go` | go test | golangci-lint | gocyclo | placeholder |
+| `python` | pytest | ruff | radon CC | pytest-benchmark |
+| `node` | npm test | eslint | eslint complexity | vitest bench |
+| `go` | go test | golangci-lint | gocyclo | go test -bench |
+| `rust` | cargo test | clippy | cargo-geiger | cargo bench (Criterion) |
 
 ### `templates/claude-code/`
 
 | File | Copied to adopted repo as |
 |------|--------------------------|
-| `CLAUDE.md` | `.claude/CLAUDE.md` |
+| `FORGE_BRIDGE.md` | `.claude/CLAUDE.md` |
 | `settings.json` | `.claude/settings.json` (only if not already present) |
+| `skills/forge-cycle.md` | `.claude/skills/forge-cycle.md` (`/forge-cycle` skill) |
 
 ### `templates/cursor/`
 
 | File | Copied to adopted repo as |
 |------|--------------------------|
-| `forge-v3.mdc` | `.cursor/rules/forge-v3.mdc` |
+| `forge.mdc` | `.cursor/rules/forge.mdc` |
+
+### `templates/codex/`
+
+| File | Copied to adopted repo as |
+|------|--------------------------|
+| `program.md` | `program.md` |
+
+### `templates/copilot/`
+
+| File | Copied to adopted repo as |
+|------|--------------------------|
+| `copilot-instructions.md` | `.github/copilot-instructions.md` |
 
 ---
 
@@ -114,5 +139,5 @@ PROJECT_LOG.md       ← cycles and velocity for this repo only
   settings.json      ← example hooks (edit to taste)
 
 .cursor/rules/
-  forge-v3.mdc       ← Cursor rule
+  forge.mdc       ← Cursor rule
 ```

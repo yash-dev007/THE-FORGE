@@ -89,7 +89,7 @@ All paths are constructed as `<ObsidianVaultRoot>/Forge/Patterns/` and
 For richer Obsidian integration (backlinks, graph queries, search):
 - Install the Obsidian Local REST API plugin or `obsidian-mcp`.
 - Add it to your Claude Code MCP config.
-- Update `templates/claude-code/CLAUDE.md` in your adopted repo to use MCP calls
+- Update `templates/claude-code/FORGE_BRIDGE.md` in your adopted repo to use MCP calls
   instead of direct file reads.
 
 The kit does not require an MCP server — direct reads are sufficient for the

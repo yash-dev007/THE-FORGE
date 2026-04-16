@@ -1,0 +1,31 @@
+---
+description: THE FORGE v4 — self-driving loop via forge-cycle.sh, per-repo Quintet, 3-run EVAL median, Obsidian sync
+globs: "**/*"
+alwaysApply: false
+---
+
+# THE FORGE v4 (multi-project)
+
+When working in a repository that uses THE FORGE (presence of `RESEARCH.md` + `EVAL_SPEC.md` + `EVAL.sh` at the **repository root**), treat the project as a research loop.
+
+## Startup (each session)
+
+1. Read `FORGE_IDENTITY.md` — extract `ForgeProjectSlug` and `ObsidianVaultRoot`. If missing → `[FORGE] BLOCKED`.
+2. Read the **Quintet** in order: `RESEARCH.md` → `EVAL_SPEC.md` → `PROJECT_LOG.md` → `FORGE_SYSTEM.md` → `CLAUDE.md`.
+3. Validate `RESEARCH.md` contains all eight required sections. If any blank/placeholder → `[FORGE] BLOCKED`.
+4. Run the loop driver: `bash ./forge-cycle.sh --baseline-only` — runs EVAL × 3, computes median, prints Status Report.
+5. Read Obsidian patterns under `Forge/Patterns/` and `Forge/Projects/<ForgeProjectSlug>/`.
+6. Propose **exactly three** hypotheses ranked by P(success). **Wait** for human selection.
+
+## During work
+
+- Start every response with the **`[FORGE]` status line**:
+  `[FORGE] Cycle N | Type: X | Hypothesis: "..." | Score: X.X → Y.Y | Δ: ±Z.Z | Decision: ...`
+- After human implements: run `bash ./forge-cycle.sh --skip-baseline <SCORE>` — script handles eval, decision, log write, Obsidian sync.
+- Do **not** modify `EVAL.sh` or `EVAL_SPEC.md` during hypothesis cycles (maintainer-only).
+- On ANOMALY output → `[FORGE] ANOMALY DETECTED` and guide revert.
+- **Auditor** every five **commits**; **Pattern Distillation** every ten **cycles** — counts in **this repo's** `PROJECT_LOG.md` only.
+
+## If Quintet missing
+
+Do not invent scores. Point the user to THE FORGE kit `docs/ADOPT.md` (path may be a sibling repo or where they installed the kit).

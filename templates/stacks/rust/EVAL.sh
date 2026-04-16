@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# Go-oriented Forge evaluator — starter template.
+# Rust-oriented Forge evaluator — starter template.
 #
-# PERF_SCORE: go test -bench=. → ns/op mapped to 0–10.
+# PERF_SCORE: cargo bench (Criterion) → ns/iter mapped to 0–10.
 #             Falls back to hyperfine if FORGE_BENCH_CMD is set in FORGE_IDENTITY.md.
-#             Falls back to 6.0 placeholder if no benchmarks found.
-#             See docs/EVAL_BENCHMARKS.md for go test -bench and hyperfine options.
-# QUAL_SCORE: golangci-lint (pass → 9.0; any issues → 3.0).
-# TEST_SCORE: go test ./... short mode (pass → 10.0; fail → 0.0).
-# DEBT_SCORE: gocyclo — counts functions with cyclomatic complexity > 10.
-#             Install: go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
+#             Falls back to 6.0 placeholder if neither is configured.
+#             See docs/EVAL_BENCHMARKS.md for Criterion and hyperfine options.
+# QUAL_SCORE: cargo clippy — warnings-as-errors (0 warnings → 9.0; any → 3.0).
+# TEST_SCORE: cargo test (pass → 10.0; fail → 0.0).
+# DEBT_SCORE: cargo clippy complexity lints — counts complexity warnings.
 #
 # Agents must NOT edit this file during hypothesis cycles (write-protected by CLAUDE.md Rule 1).
 # Human maintainers may edit for adoption, stack upgrades, or harness repair only.
@@ -17,9 +16,9 @@ set -euo pipefail
 EXIT=0
 
 PERF_SCORE=6.0   # default placeholder; overridden below if benchmarks exist
-QUAL_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once golangci-lint runs
-TEST_SCORE=5.0   # 5.0 = not yet measured; rises to 0.0 or 10.0 once go test runs
-DEBT_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once gocyclo runs
+QUAL_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once clippy runs
+TEST_SCORE=5.0   # 5.0 = not yet measured; rises to 0.0 or 10.0 once cargo test runs
+DEBT_SCORE=5.0   # 5.0 = not yet measured; rises to 3.0–9.0 once complexity lints run
 
 # Read optional FORGE_BENCH_CMD from FORGE_IDENTITY.md (hyperfine fallback)
 FORGE_BENCH_CMD=""
@@ -28,13 +27,13 @@ if [[ -f FORGE_IDENTITY.md ]]; then
 fi
 
 # ── Runtime check ──────────────────────────────────────────────────────────────
-if ! command -v go >/dev/null 2>&1; then
-  echo "FORGE_EVAL_ERR: go not found" >&2
+if ! command -v cargo >/dev/null 2>&1; then
+  echo "FORGE_EVAL_ERR: cargo not found (install Rust via https://rustup.rs)" >&2
   printf "PERF_SCORE: 0.0\nQUAL_SCORE: 0.0\nTEST_SCORE: 0.0\nDEBT_SCORE: 0.0\nSCORE: 0.0\n"
   exit 2
 fi
 
-# Helper: parse hyperfine JSON median → score (uses python3 if available, else awk)
+# Helper: parse hyperfine JSON median → score
 _parse_hf_json() {
   local file="$1"
   if command -v python3 >/dev/null 2>&1; then
@@ -50,53 +49,60 @@ except Exception:
     print("6.0")
 PY
   else
-    # Fallback: grep for median value
     local med
     med=$(grep -oE '"median":[[:space:]]*[0-9.]+' "$file" | head -1 | grep -oE '[0-9.]+$' || echo "1")
     awk -v med="$med" 'BEGIN{
       score = 10.0 - log(med < 0.001 ? 0.001 : med+0) / log(10) * 2.5
-      if (score > 10) score = 10
-      if (score < 0)  score = 0
+      if (score > 10) score = 10; if (score < 0) score = 0
       printf "%.2f\n", score
     }'
   fi
 }
 
 # ── PERF_SCORE ─────────────────────────────────────────────────────────────────
-# Strategy 1: go test -bench=. (any *_test.go with Benchmark* functions)
-BENCH_COUNT=$(grep -rl '^func Benchmark' . --include='*_test.go' 2>/dev/null | wc -l | tr -d '[:space:]' || echo 0)
-if [[ "$BENCH_COUNT" -gt 0 ]]; then
-  BENCH_OUT_FILE="/tmp/forge_gobench_$$.txt"
+# Strategy 1: cargo bench (Criterion in benches/)
+BENCH_EXISTS=false
+[[ -d benches ]] && ls benches/*.rs >/dev/null 2>&1 && BENCH_EXISTS=true
+
+if [[ "$BENCH_EXISTS" == "true" ]]; then
+  BENCH_OUT_FILE="/tmp/forge_rustbench_$$.txt"
   set +e
-  go test -bench=. -benchtime=3s -run='^$' ./... 2>/dev/null > "$BENCH_OUT_FILE"
-  GO_BENCH_EXIT=$?
+  cargo bench 2>/dev/null | tee "$BENCH_OUT_FILE" >/dev/null
+  CARGO_BENCH_EXIT=$?
   set -e
-  if [[ $GO_BENCH_EXIT -eq 0 && -s "$BENCH_OUT_FILE" ]]; then
-    # Extract all ns/op values, take median, map to 0–10
+  if [[ $CARGO_BENCH_EXIT -eq 0 && -s "$BENCH_OUT_FILE" ]]; then
+    # Criterion output: "forge_bench    time:   [X.XX µs X.XX µs X.XX µs]"
+    # Extract median (middle value), convert to ns, map to score
     PERF_SCORE=$(awk '
-      /[0-9]+ ns\/op/ {
-        for(i=1;i<=NF;i++) {
-          if ($i ~ /^[0-9]+(\.[0-9]+)?$/ && $(i+1) == "ns/op") {
-            vals[n++] = $i + 0
-          }
+      /time:/ {
+        # Find three timing values in brackets
+        if (match($0, /\[([0-9.]+) ([a-zµ]+)/, arr)) {
+          # Use first value as representative (lower bound)
+          val = arr[1] + 0
+          unit = arr[2]
+          # Normalize to nanoseconds
+          if (unit == "ns") ns = val
+          else if (unit == "µs" || unit == "us") ns = val * 1000
+          else if (unit == "ms") ns = val * 1000000
+          else if (unit == "s")  ns = val * 1000000000
+          else ns = val
+          vals[n++] = ns
         }
       }
       END {
         if (n == 0) { print "6.0"; exit }
-        for(i=0; i<n-1; i++) for(j=i+1; j<n; j++) if(vals[i]>vals[j]){t=vals[i];vals[i]=vals[j];vals[j]=t}
+        for(i=0;i<n-1;i++) for(j=i+1;j<n;j++) if(vals[i]>vals[j]){t=vals[i];vals[i]=vals[j];vals[j]=t}
         med = vals[int(n/2)]
         if (med <= 0) { print "6.0"; exit }
-        # 1ns→10, 1us(1000ns)→7.5, 1ms(1e6ns)→5, 1s(1e9ns)→2.5
         log10_med = log(med) / log(10)
         score = 10.0 - log10_med * 0.83
-        if (score > 10) score = 10
-        if (score < 0)  score = 0
+        if (score > 10) score = 10; if (score < 0) score = 0
         printf "%.2f\n", score
       }
     ' "$BENCH_OUT_FILE") || PERF_SCORE=6.0
     rm -f "$BENCH_OUT_FILE"
   else
-    echo "FORGE_EVAL_WARN: go test -bench failed; trying hyperfine" >&2
+    echo "FORGE_EVAL_WARN: cargo bench failed; trying hyperfine" >&2
     rm -f "$BENCH_OUT_FILE" 2>/dev/null || true
   fi
 fi
@@ -114,16 +120,16 @@ if [[ "$PERF_SCORE" == "6.0" && -n "$FORGE_BENCH_CMD" ]] && command -v hyperfine
   else
     echo "FORGE_EVAL_WARN: hyperfine failed; PERF_SCORE left at placeholder" >&2
   fi
-elif [[ "$PERF_SCORE" == "6.0" && "$BENCH_COUNT" -eq 0 ]]; then
-  echo "FORGE_EVAL_WARN: no Benchmark* functions found, no FORGE_BENCH_CMD set; PERF_SCORE=6.0 placeholder — see docs/EVAL_BENCHMARKS.md" >&2
+elif [[ "$PERF_SCORE" == "6.0" && "$BENCH_EXISTS" == "false" ]]; then
+  echo "FORGE_EVAL_WARN: no benches/ directory, no FORGE_BENCH_CMD; PERF_SCORE=6.0 placeholder — see docs/EVAL_BENCHMARKS.md" >&2
 fi
 
 # ── TEST_SCORE ─────────────────────────────────────────────────────────────────
 set +e
-go test ./... -count=1 -short 2>/dev/null
-GO_TEST_EXIT=$?
+cargo test --quiet 2>/dev/null
+CARGO_TEST_EXIT=$?
 set -e
-if [[ $GO_TEST_EXIT -eq 0 ]]; then
+if [[ $CARGO_TEST_EXIT -eq 0 ]]; then
   TEST_SCORE=10.0
 else
   TEST_SCORE=0.0
@@ -131,26 +137,23 @@ else
 fi
 
 # ── QUAL_SCORE ─────────────────────────────────────────────────────────────────
-if command -v golangci-lint >/dev/null 2>&1; then
-  if golangci-lint run --timeout=5m >/dev/null 2>&1; then
-    QUAL_SCORE=9.0
-  else
-    QUAL_SCORE=3.0
-  fi
+set +e
+CLIPPY_OUTPUT=$(cargo clippy -- -D warnings 2>&1)
+CLIPPY_EXIT=$?
+set -e
+if [[ $CLIPPY_EXIT -eq 0 ]]; then
+  QUAL_SCORE=9.0
 else
-  echo "FORGE_EVAL_WARN: golangci-lint not found; QUAL_SCORE left at default" >&2
+  QUAL_SCORE=3.0
 fi
 
 # ── DEBT_SCORE ─────────────────────────────────────────────────────────────────
-if command -v gocyclo >/dev/null 2>&1; then
-  COMPLEX_COUNT=$(gocyclo -over 10 . 2>/dev/null | wc -l | tr -d '[:space:]' || echo 0)
-  if [[ "$COMPLEX_COUNT" -eq 0 ]]; then
-    DEBT_SCORE=9.0
-  else
-    DEBT_SCORE=$(awk -v c="$COMPLEX_COUNT" 'BEGIN{v=10.0-c*0.5; if(v<3.0)v=3.0; printf "%.2f",v}')
-  fi
+# Count clippy complexity-related warnings (cognitive_complexity, too_many_arguments, etc.)
+COMPLEXITY_WARNS=$(echo "$CLIPPY_OUTPUT" | grep -cE 'cognitive_complexity|too_many_arguments|too_many_lines|cyclomatic' 2>/dev/null || echo 0)
+if [[ "$COMPLEXITY_WARNS" -eq 0 ]]; then
+  DEBT_SCORE=9.0
 else
-  echo "FORGE_EVAL_WARN: gocyclo not found (go install github.com/fzipp/gocyclo/cmd/gocyclo@latest); DEBT_SCORE left at default" >&2
+  DEBT_SCORE=$(awk -v c="$COMPLEXITY_WARNS" 'BEGIN{v=10.0-c*0.5; if(v<3.0)v=3.0; printf "%.2f",v}')
 fi
 
 # ── Composite SCORE ────────────────────────────────────────────────────────────

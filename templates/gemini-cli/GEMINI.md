@@ -1,5 +1,5 @@
 # THE FORGE — Gemini CLI integration (adopted project)
-> **Version:** 3.2 (Universal Edition) | **Author:** Yash | **Last Updated:** 2026-04-13
+> **Version:** 4.0 | **Author:** Yash | **Last Updated:** 2026-04-16
 
 This file lives at `GEMINI.md` in an **adopted repository**.
 The primary operating rules are in `CLAUDE.md` at the **repository root** — read
@@ -28,8 +28,12 @@ Read in order:
 5. `CLAUDE.md` — Operating rules (root `CLAUDE.md` contains the platform-neutral rules).
 
 **Step 6 — Baseline**
-Run EVAL.sh three times using the `run_shell_command` tool. Record median composite
-`SCORE` as `BASELINE_SCORE` with timestamp in `RESEARCH.md`.
+Run the loop driver using the `run_shell_command` tool:
+```bash
+bash ./forge-cycle.sh --baseline-only
+```
+This runs EVAL.sh three times automatically, computes the median, and prints the Forge Status Report.
+Record the median composite `SCORE` as `BASELINE_SCORE`.
 
 **Step 7 — Obsidian patterns**
 Read Markdown files under:
@@ -45,30 +49,31 @@ Output the Forge Status Report (format in root `CLAUDE.md`), then propose exactl
 
 ---
 
-## Running EVAL.sh from Gemini CLI
+## Running the Forge cycle from Gemini CLI
 
-Use the `run_shell_command` tool from the repository root:
-
+**Baseline only** (before hypothesis generation):
 ```bash
-bash ./EVAL.sh
+bash ./forge-cycle.sh --baseline-only
 ```
 
-Capture the `SCORE:` line from stdout. Repeat **3 times on unchanged code**;
-take the median as baseline. The v3 rules forbid commit/revert decisions on a
-single run.
+**After human implements a hypothesis**:
+```bash
+bash ./forge-cycle.sh --skip-baseline <BASELINE_SCORE>
+```
+
+**Full interactive cycle** (less common with Gemini CLI):
+```bash
+bash ./forge-cycle.sh
+```
+
+The cycle driver handles EVAL × 3, median computation, anti-gaming, decision, PROJECT_LOG.md write, and Obsidian sync automatically.
 
 **Exit code interpretation:**
 | Code | Meaning |
 |------|---------|
-| 0 | Harness finished; inspect score lines |
-| 1 | Tests failed — treat as a low TEST_SCORE, not an env error |
-| 2 | Environment error (missing runtime) — fix env before cycling |
-
-If the three scores vary by more than ±0.3, output:
-```
-[FORGE] WARN: EVAL.sh variance > 0.3 — harness may be flaky. Human must fix before cycling.
-```
-Do not use flaky scores to make commit/revert decisions.
+| 0 | Cycle complete; read decision from stdout |
+| 1 | Tests failed — low TEST_SCORE, not env error |
+| 2 | Environment error (missing runtime) — fix before cycling |
 
 ---
 

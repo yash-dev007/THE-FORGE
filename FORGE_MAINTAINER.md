@@ -35,6 +35,24 @@ AI workspace context for this kit repo lives in [CLAUDE.md](CLAUDE.md)
 
 Refer to [README.md](README.md) for the high-level overview and [docs/KIT_LAYOUT.md](docs/KIT_LAYOUT.md) for the detailed file map.
 
+### v4.0 — Self-running loop driver + full platform support
+- **Loop driver:** `forge-cycle.sh` — one command runs the full Diagnose → Verify cycle.
+  Handles EVAL × 3 median, anti-gaming anomaly detection, decision, PROJECT_LOG write.
+- **Obsidian automation:** `forge-obsidian-sync.sh` — auto-writes Score History,
+  updates Project Index, detects pattern promotion candidates.
+- **Score visualization:** `forge-chart.py` — zero-dependency HTML chart from PROJECT_LOG.md.
+- **Real PERF_SCORE:** pytest-benchmark (Python), vitest bench (Node), go test -bench (Go),
+  cargo bench/Criterion (Rust). No more static 6.0 placeholder.
+- **Rust stack:** Full EVAL harness for Rust (cargo test + clippy + cargo bench).
+- **Interactive adoption:** `--interactive` flag fills templates and runs first EVAL in < 5 min.
+- **Platform selection:** `--platforms` flag chooses which bridge files to copy.
+- **Codex + Copilot:** First-class platform support added alongside Claude/Gemini/Cursor.
+- **Pre-seeded patterns:** 15 patterns across Python (5), Node (3), Go (3), Universal (4).
+- **New docs:** `docs/PLATFORMS.md` (multi-platform guide), `docs/spec/CLAUDE_v4.md` (v4 spec),
+  `docs/LOOP_DRIVER.md` (loop driver reference).
+- **Bug fixes:** `forge-adopt.ps1` garbled end, missing `forge-chart.py` copy;
+  `forge-update.sh`/`.ps1` reference to deleted `CLAUDE.md` → `FORGE_BRIDGE.md`.
+
 ### v3.2 — Platform Neutrality & Gemini CLI
 - Renamed `templates/universal/CLAUDE.md` to `FORGE.md`.
 - Renamed `cursor.md` to `FORGE_MAINTAINER.md`.
@@ -103,9 +121,12 @@ Refer to **[docs/KIT_LAYOUT.md](docs/KIT_LAYOUT.md)** for a complete directory m
 
 ## Changelog (kit workspace)
 
+- **2026-04-16 v4.0** — Self-running loop driver, Obsidian automation, real PERF_SCORE
+  per stack, Rust stack, interactive adoption, Codex + Copilot platforms, pre-seeded
+  pattern library, score visualization, PLATFORMS.md + CLAUDE_v4.md spec.
 - **2026-04-13 v3.2** — Gemini CLI support added to all stacks and adoption scripts.
 - **2026-04-12 v3.1** — Deep completion: Claude Code integration, DEBT_SCORE fixes
   for Node + Go, FORGE_SYSTEM template expansion, ADOPT.md Claude Code section,
-  CUSTOMIZING_EVAL guide, OBSIDIAN_SETUP guide, forge-update scripts.
+  EVAL_BENCHMARKS guide, OBSIDIAN_SETUP guide, forge-update scripts.
 - **2026-04-12 v3.0** — Initial multi-project kit: templates, stacks, docs, scripts,
   Obsidian samples, Cursor rule template.

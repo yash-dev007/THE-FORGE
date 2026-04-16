@@ -3,9 +3,10 @@
   Refresh THE FORGE methodology templates in an already-adopted repository.
 
 .DESCRIPTION
-  Copies CLAUDE.md, Claude Code integration files (.claude/), and the Cursor rule
-  into the target repo. Does NOT overwrite project state files (FORGE_IDENTITY.md,
-  RESEARCH.md, FORGE_SYSTEM.md, PROJECT_LOG.md).
+  Refreshes CLAUDE.md, all platform bridge files (.claude/, GEMINI.md, forge.mdc,
+  program.md, copilot-instructions.md), and loop driver scripts (forge-cycle.sh,
+  forge-obsidian-sync.sh, forge-chart.py). Does NOT overwrite project state files
+  (FORGE_IDENTITY.md, RESEARCH.md, FORGE_SYSTEM.md, PROJECT_LOG.md).
 
   Use -UpdateEval to also refresh EVAL.sh + EVAL_SPEC.md from the chosen stack
   template. WARNING: this resets the scoring baseline — re-run EVAL.sh three times
@@ -15,7 +16,7 @@
   Absolute path to the already-adopted repository root.
 
 .PARAMETER Stack
-  Stack name: minimal | python | node | go (required when -UpdateEval is set).
+  Stack name: minimal | python | node | go | rust (required when -UpdateEval is set).
 
 .PARAMETER UpdateEval
   Switch. Also refreshes EVAL.sh and EVAL_SPEC.md. Use carefully — resets baseline.
@@ -29,7 +30,7 @@ param(
   [string] $TargetRepo,
 
   [Parameter(Mandatory = $false)]
-  [ValidateSet("minimal", "python", "node", "go")]
+  [ValidateSet("minimal", "python", "node", "go", "rust")]
   [string] $Stack = "",
 
   [switch] $UpdateEval
@@ -49,6 +50,7 @@ if (-not (Test-Path $TargetRepo -PathType Container)) {
 
 $KitRoot   = Split-Path -Parent $PSScriptRoot
 $Templates = Join-Path $KitRoot "templates"
+$Scripts   = Join-Path $KitRoot "scripts"
 $Universal = Join-Path $Templates "universal"
 $ClaudeCC  = Join-Path $Templates "claude-code"
 $CursorDir = Join-Path $Templates "cursor"
@@ -68,7 +70,12 @@ $claudeDir = Join-Path $TargetRepo ".claude"
 if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Force -Path $claudeDir | Out-Null }
 
 Write-Host "  [update] .claude\CLAUDE.md"
-Copy-FileSafe (Join-Path $ClaudeCC "CLAUDE.md") (Join-Path $claudeDir "CLAUDE.md")
+Copy-FileSafe (Join-Path $ClaudeCC "FORGE_BRIDGE.md") (Join-Path $claudeDir "CLAUDE.md")
+
+$skillsDst = Join-Path $claudeDir "skills"
+if (-not (Test-Path $skillsDst)) { New-Item -ItemType Directory -Force -Path $skillsDst | Out-Null }
+Write-Host "  [update] .claude\skills\forge-cycle.md"
+Copy-FileSafe (Join-Path $ClaudeCC "skills\forge-cycle.md") (Join-Path $skillsDst "forge-cycle.md")
 
 $settingsDst = Join-Path $claudeDir "settings.json"
 if (-not (Test-Path $settingsDst)) {
@@ -81,13 +88,34 @@ if (-not (Test-Path $settingsDst)) {
 # --- Update Cursor rule ---
 $cursorRulesDst = Join-Path $TargetRepo ".cursor\rules"
 if (-not (Test-Path $cursorRulesDst)) { New-Item -ItemType Directory -Force -Path $cursorRulesDst | Out-Null }
-Write-Host "  [update] .cursor\rules\forge-v3.mdc"
-Copy-FileSafe (Join-Path $CursorDir "forge-v3.mdc") (Join-Path $cursorRulesDst "forge-v3.mdc")
+Write-Host "  [update] .cursor\rules\forge.mdc"
+Copy-FileSafe (Join-Path $CursorDir "forge.mdc") (Join-Path $cursorRulesDst "forge.mdc")
 
 # --- Update Gemini CLI integration ---
-$GeminiDir = Join-Path $Templates "gemini-cli"
 Write-Host "  [update] GEMINI.md"
-Copy-FileSafe (Join-Path $GeminiDir "GEMINI.md") (Join-Path $TargetRepo "GEMINI.md")
+Copy-FileSafe (Join-Path $Templates "gemini-cli\GEMINI.md") (Join-Path $TargetRepo "GEMINI.md")
+
+# --- Update Codex integration (if present in target) ---
+$CodexDst = Join-Path $TargetRepo "program.md"
+if (Test-Path $CodexDst) {
+  Write-Host "  [update] program.md (Codex)"
+  Copy-FileSafe (Join-Path $Templates "codex\program.md") $CodexDst
+}
+
+# --- Update Copilot integration (if present in target) ---
+$CopilotDst = Join-Path $TargetRepo ".github\copilot-instructions.md"
+if (Test-Path $CopilotDst) {
+  Write-Host "  [update] .github\copilot-instructions.md"
+  Copy-FileSafe (Join-Path $Templates "copilot\copilot-instructions.md") $CopilotDst
+}
+
+# --- Update loop driver scripts ---
+Write-Host "  [update] forge-cycle.sh"
+Copy-FileSafe (Join-Path $Scripts "forge-cycle.sh") (Join-Path $TargetRepo "forge-cycle.sh")
+Write-Host "  [update] forge-obsidian-sync.sh"
+Copy-FileSafe (Join-Path $Scripts "forge-obsidian-sync.sh") (Join-Path $TargetRepo "forge-obsidian-sync.sh")
+Write-Host "  [update] forge-chart.py"
+Copy-FileSafe (Join-Path $Scripts "forge-chart.py") (Join-Path $TargetRepo "forge-chart.py")
 
 # --- Optionally update EVAL harness ---
 if ($UpdateEval) {

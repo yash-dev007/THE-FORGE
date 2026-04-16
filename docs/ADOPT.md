@@ -27,26 +27,40 @@ The slug is recorded in `FORGE_IDENTITY.md` and used as the Obsidian path
 
 ---
 
-## Step 2 — Run the adopt script (recommended)
+## Step 2 — Run the adopt script
 
-The scripts copy all files from `templates/` in one pass, including agent
-integration for both Cursor and Claude Code.
+**Interactive mode (recommended — zero-to-first-EVAL in < 5 minutes):**
 
-**Windows (Git Bash or PowerShell):**
-```powershell
-# PowerShell
-.\scripts\forge-adopt.ps1 -TargetRepo 'D:\path\to\your-app' -Stack python
-
-# Git Bash
-./scripts/forge-adopt.sh --target /d/path/to/your-app --stack python
-```
-
-**Unix / macOS:**
 ```bash
-./scripts/forge-adopt.sh --target /path/to/your-app --stack go
+# Unix / macOS / Git Bash
+./scripts/forge-adopt.sh --target /path/to/your-app --interactive
+
+# Windows (PowerShell)
+.\scripts\forge-adopt.ps1 -TargetRepo 'D:\path\to\your-app' -Interactive
 ```
 
-Available stacks: `minimal` · `python` · `node` · `go`
+Interactive mode asks 5 questions (project name, description, improvement goal,
+Obsidian vault path, benchmark command), auto-fills `FORGE_IDENTITY.md`, and
+runs `EVAL.sh × 1` immediately to verify setup.
+
+**Non-interactive mode:**
+
+```bash
+# Auto-detects stack from requirements.txt / package.json / go.mod / Cargo.toml
+./scripts/forge-adopt.sh --target /path/to/your-app
+
+# Explicit stack
+./scripts/forge-adopt.sh --target /path/to/your-app --stack python
+```
+
+Available stacks: `minimal` · `python` · `node` · `go` · `rust`
+
+**Platform selection (optional):**
+```bash
+# Only copy Claude Code + Gemini bridge files (skip Cursor, Codex, Copilot)
+./scripts/forge-adopt.sh --target /path/to/your-app --platforms claude,gemini
+```
+Default: all platforms (`claude,gemini,cursor,codex,copilot`).
 
 **What the script copies:**
 
@@ -59,10 +73,17 @@ Available stacks: `minimal` · `python` · `node` · `go`
 | `templates/universal/PROJECT_LOG.md.template` | `<repo>/PROJECT_LOG.md` |
 | `templates/stacks/<stack>/EVAL_SPEC.md` | `<repo>/EVAL_SPEC.md` |
 | `templates/stacks/<stack>/EVAL.sh` | `<repo>/EVAL.sh` (chmod +x on Unix) |
-| `templates/cursor/forge-v3.mdc` | `<repo>/.cursor/rules/forge-v3.mdc` |
-| `templates/claude-code/CLAUDE.md` | `<repo>/.claude/CLAUDE.md` |
+| `templates/stacks/<stack>/benchmark.*` | `<repo>/benchmark.*` (if present) |
+| `scripts/forge-cycle.sh` | `<repo>/forge-cycle.sh` (loop driver) |
+| `scripts/forge-obsidian-sync.sh` | `<repo>/forge-obsidian-sync.sh` |
+| `scripts/forge-chart.py` | `<repo>/forge-chart.py` (score visualization) |
+| `templates/claude-code/FORGE_BRIDGE.md` | `<repo>/.claude/CLAUDE.md` |
 | `templates/claude-code/settings.json` | `<repo>/.claude/settings.json` |
-| `templates/gemini-cli/GEMINI.md` | `<repo>/GEMINI.md` (Gemini CLI integration) |
+| `templates/claude-code/skills/forge-cycle.md` | `<repo>/.claude/skills/forge-cycle.md` |
+| `templates/gemini-cli/GEMINI.md` | `<repo>/GEMINI.md` |
+| `templates/cursor/forge.mdc` | `<repo>/.cursor/rules/forge.mdc` |
+| `templates/codex/program.md` | `<repo>/program.md` |
+| `templates/copilot/copilot-instructions.md` | `<repo>/.github/copilot-instructions.md` |
 
 ---
 
@@ -83,7 +104,7 @@ Open `EVAL.sh` in the target repo.
 
 The stack templates measure TEST, QUAL, and DEBT automatically. PERF_SCORE is a
 static placeholder (6.0). To wire a real performance benchmark, follow
-[CUSTOMIZING_EVAL.md](CUSTOMIZING_EVAL.md).
+[EVAL_BENCHMARKS.md](EVAL_BENCHMARKS.md).
 
 Customize weights in `EVAL_SPEC.md` if your project's quality model differs from
 the stack defaults. Document your reasoning in `FORGE_SYSTEM.md` under
@@ -93,15 +114,22 @@ the stack defaults. Document your reasoning in `FORGE_SYSTEM.md` under
 
 ## Step 5 — Establish baseline
 
-In the target repo root, run EVAL.sh three times on **unchanged code**:
+Use the loop driver (handles the triple-run and variance check automatically):
 
 ```bash
-bash ./EVAL.sh && bash ./EVAL.sh && bash ./EVAL.sh
+bash ./forge-cycle.sh --baseline-only
 ```
 
-Record the **median** `SCORE` in `RESEARCH.md` under **Baseline Score** with a
-timestamp. If the max−min spread across the three runs exceeds **0.3**, stop:
-the harness is flaky. Fix `EVAL.sh` or the environment before cycling.
+On Windows (PowerShell):
+```powershell
+.\forge-cycle.ps1 -BaselineOnly
+```
+
+The driver runs EVAL.sh × 3, computes the median, warns if variance > 0.3,
+and prints the Forge Status Report. Record the `SCORE` value in `RESEARCH.md`
+under **Baseline Score** with a timestamp.
+
+See [LOOP_DRIVER.md](LOOP_DRIVER.md) for full loop driver documentation.
 
 ---
 
@@ -118,7 +146,7 @@ Required fields:
 
 ## Step 7a — Cursor integration
 
-After adoption, the repo contains `.cursor/rules/forge-v3.mdc` (copied by the
+After adoption, the repo contains `.cursor/rules/forge.mdc` (copied by the
 adopt script). Two options:
 
 - **Per repo (default):** The `.mdc` file is scoped to this workspace automatically.
@@ -130,21 +158,32 @@ See [CURSOR_RULES.md](CURSOR_RULES.md) for full details.
 
 ---
 
-## Step 7b — Gemini CLI & Claude Code integration
+## Step 7b — Agent integrations (all platforms)
 
-After adoption, the repo contains `.claude/CLAUDE.md`, `.claude/settings.json`, and `GEMINI.md`
-(copied by the adopt script).
+After adoption, the repo contains bridge files for all supported AI platforms.
+See [PLATFORMS.md](PLATFORMS.md) for per-platform setup details.
 
-`GEMINI.md` tells Gemini CLI:
-- The startup gate (read FORGE_IDENTITY.md, then the Quintet in order)
-- How to run EVAL.sh via the `run_shell_command` tool
-- How to read Obsidian pattern files using the `read_file` tool
-- Which tools are allowed during hypothesis cycles
+**Platform bridge files copied:**
 
-`.claude/CLAUDE.md` does the same for Claude Code.
-`.claude/settings.json` provides example hooks for Claude Code.
+| Platform | File | Activates |
+|----------|------|-----------|
+| Claude Code | `.claude/CLAUDE.md`, `.claude/skills/forge-cycle.md` | Automatically on session start |
+| Gemini CLI | `GEMINI.md` | Automatically on session start |
+| Cursor | `.cursor/rules/forge.mdc` | Automatically as workspace rule |
+| Codex | `program.md` | Automatically on session start |
+| GitHub Copilot | `.github/copilot-instructions.md` | Automatically as workspace context |
 
-**Session start in Gemini CLI:** Open the adopted repo directory in Gemini CLI. It automatically reads `GEMINI.md` at the repo root. The startup gate automatically runs the Forge initialization sequence.
+**Claude Code — `/forge-cycle` skill:**
+```
+/forge-cycle
+```
+Runs the full Diagnose → Hypothesize → Execute → Verify cycle via the loop driver.
+
+**All platforms — manual invocation:**
+```bash
+bash ./forge-cycle.sh --baseline-only       # baseline + status report
+bash ./forge-cycle.sh --skip-baseline 6.50  # evaluate after implementation
+```
 
 ---
 
@@ -175,7 +214,7 @@ project state:
 ./scripts/forge-update.sh --target /path/to/your-app
 ```
 
-This updates `CLAUDE.md`, `.claude/`, and `.cursor/rules/forge-v3.mdc` only.
+This updates `CLAUDE.md`, `.claude/`, and `.cursor/rules/forge.mdc` only.
 It does NOT touch `FORGE_IDENTITY.md`, `RESEARCH.md`, `FORGE_SYSTEM.md`,
 or `PROJECT_LOG.md` — your project state is preserved.
 
