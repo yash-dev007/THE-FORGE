@@ -30,3 +30,7 @@ Test/
 
 # ── Implementation plans (private, not shipped) ───────────────────────────────
 plans/
+
+# ── Python bytecode ────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc

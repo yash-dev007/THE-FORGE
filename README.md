@@ -81,7 +81,25 @@ The script handles: EVAL.sh × 3 median, variance warnings, anti-gaming anomaly 
 
 ### 1. Adopt Forge into your project
 
-**Interactive mode (recommended — zero-to-first-EVAL in under 5 minutes):**
+**One-liner (from inside your project directory):**
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/yash-dev007/THE-FORGE/main/install.sh)
+```
+
+Downloads THE FORGE to `~/.forge`, asks 5 setup questions, and runs your first `EVAL.sh` — all in under 5 minutes. The kit lives at `~/.forge` so future projects reuse it without re-downloading.
+
+**With options:**
+
+```bash
+# Specific stack + platforms only
+bash <(curl -fsSL https://raw.githubusercontent.com/yash-dev007/THE-FORGE/main/install.sh) -- --stack python --platforms claude,gemini
+
+# Skip interactive prompts
+bash <(curl -fsSL https://raw.githubusercontent.com/yash-dev007/THE-FORGE/main/install.sh) -- --no-interactive
+```
+
+**Or run the adopt script directly (if you cloned the kit):**
 
 ```bash
 # Unix / macOS / Git Bash
@@ -89,18 +107,6 @@ The script handles: EVAL.sh × 3 median, variance warnings, anti-gaming anomaly 
 
 # Windows (PowerShell)
 .\scripts\forge-adopt.ps1 -TargetRepo 'C:\path\to\your-project' -Interactive
-```
-
-Interactive mode asks 5 questions, auto-fills `FORGE_IDENTITY.md`, and runs `EVAL.sh` immediately to verify setup.
-
-**Non-interactive:**
-
-```bash
-# Stack is auto-detected from requirements.txt / package.json / go.mod / Cargo.toml
-./scripts/forge-adopt.sh --target /path/to/your-project
-
-# Explicit stack
-./scripts/forge-adopt.sh --target /path/to/your-project --stack python
 ```
 
 **Select platforms (optional — default copies all):**
